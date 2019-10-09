@@ -1,2 +1,5 @@
 .vscode
 build/*
+cachegrind.out*
+*cores.txt
+sequential.txt

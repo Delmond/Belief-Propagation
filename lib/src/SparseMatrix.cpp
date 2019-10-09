@@ -13,10 +13,13 @@ constexpr double EPSILON = 1e-7;
 using namespace std;
 
 template<typename T>
-SparseMatrix<T>::SparseMatrix(string file_name) {
+SparseMatrix<T> SparseMatrix<T>::fromFileDense(string file_name) {
+    unsigned height, width;
+    Node<T> **data;
+
     std::ifstream fileInput(file_name);
     if(fileInput.fail()){
-        throw domain_error("Failed opening file in Sparse Matrix constructor");
+        throw domain_error("Failed opening file in Sparse Matrix fromFileDense static method.");
     }
 
     fileInput >> height >> width;
@@ -33,9 +36,39 @@ SparseMatrix<T>::SparseMatrix(string file_name) {
             data[i].push_back({value, j, nullptr});
         }
     }
+    return SparseMatrix<T>(height, width, data);
 }
+
 template<typename T>
-SparseMatrix<T>::SparseMatrix(SparseMatrix &sm):
+SparseMatrix<T> SparseMatrix<T>::fromFileCSC(string file_name){
+    unsigned height(0), width(0);
+    vector<vector<Node<T>>> data;
+
+    ifstream fileInput(file_name);
+    if(fileInput.fail()){
+        throw domain_error("Failed opening file in Sparse Matrix fromFileCSC static method.");
+    }
+    unsigned row, column;
+    T value;
+    while(true){
+        fileInput >> row >> column >> value;
+        if(fileInput.eof())
+            break;
+        // for 1-Indexed
+        column--;
+        row--;
+        
+        if(width <= column) width = column + 1;
+        if(data.size() <= row) data.resize(row + 1);
+
+        data[row].push_back({value, column, nullptr});
+    }
+    height = data.size();
+    return SparseMatrix<T>(height, width, data);
+}
+
+template<typename T>
+SparseMatrix<T>::SparseMatrix(const SparseMatrix &sm):
     height(sm.height),
     width(sm.width),
     data(sm.data)
@@ -48,6 +81,19 @@ SparseMatrix<T>::SparseMatrix(SparseMatrix<T> &&sm):
     width(sm.width),
     data(move(sm.data))
     {}
+
+
+
+
+template<typename T>
+void SparseMatrix<T>::clear(){
+    for(unsigned i = 0; i < data.size(); i++){
+        for(unsigned j = 0; j < data[i].size(); j++){
+            data[i][j].value = T();
+        }
+    }
+
+}
 
 template<typename T>
 void SparseMatrix<T>::printSparse(const unsigned &spacing) const {
@@ -94,7 +140,26 @@ SparseMatrix<T> SparseMatrix<T>::getTransposed() const {
     }
     return transposed;
 }
-
+template<typename T>
+SparseMatrix<T> SparseMatrix<T>::getSquared() const {
+    SparseMatrix<T> squared(*this);
+    for(unsigned i = 0; i < squared.getHeight(); i++){
+        for(unsigned j = 0; j < squared.getRowSize(i); j++){
+            squared(i, j) *= squared(i, j);
+        }
+    }
+    return squared;
+}
+template<typename T>
+SparseMatrix<T> SparseMatrix<T>::getInverse() const {
+    SparseMatrix<T> inverse(*this);
+    for(unsigned i = 0; i < inverse.getHeight(); i++){
+        for(unsigned j = 0; j < inverse.getRowSize(i); j++){
+            inverse(i, j) = 1.0/inverse(i, j);
+        }
+    }
+    return inverse;
+}
 
 template class SparseMatrix<float>;
 template class SparseMatrix<double>;

@@ -6,22 +6,31 @@
 
 template<typename T>
 class BeliefPropagation {
-    SparseMatrix<T> factors;
+    static constexpr double damphing_probability = 0.7;
+    static constexpr double alpha = 0.5;
+    bool damphing_enabled = false;
+
+    SparseMatrix<T> H, H_inverse, H_squared, H_inverse_squared, H_transposed;
     vector<T> means, variances;
-    SparseMatrix<T> m_state_to_factor, m_factor_to_state, v_state_to_factor, v_factor_to_state;
+    vector<vector<int>> damphing;
+    SparseMatrix<T> m_variable_to_factor, m_factor_to_variable, v_variable_to_factor, v_factor_to_variable;
 
 public:
-    BeliefPropagation(SparseMatrix<T> factors, vector<T> means, vector<T> variances);
+    BeliefPropagation(SparseMatrix<T> H, vector<T> means, vector<T> variances);
     void initilizeMessages();
+    void initilizeDamping();
     void linkMessages();
-    void sendStateToFactor();
-    void sendFactorToState();
+    void sendVariableToFactor();
+    void sendFactorToVariable();
+    void run(const unsigned &iteration_count = 200);
+    const vector<T> computeMarginals() const;
 
     //Getters
-    SparseMatrix<T>& getMeanStateToFactor() { return m_state_to_factor; }
-    SparseMatrix<T>& getVarianceStateToFactor() { return v_state_to_factor; }
-    SparseMatrix<T>& getMeanFactorToState() { return m_factor_to_state; }
-    SparseMatrix<T>& getVarianceFactorToState() { return v_factor_to_state; }
+    SparseMatrix<T>& getMeanVariableToFactor() { return m_variable_to_factor; }
+    SparseMatrix<T>& getVarianceVariableToFactor() { return v_variable_to_factor; }
+    SparseMatrix<T>& getMeanFactorToVariable() { return m_factor_to_variable; }
+    SparseMatrix<T>& getVarianceFactorToVariable() { return v_factor_to_variable; }
+    const vector<vector<int>>& getDamphing() const{ return damphing; }
 
 };
 #endif // BELIEF_PROPAGATION_H
