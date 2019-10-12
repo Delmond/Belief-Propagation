@@ -113,7 +113,10 @@ void BeliefPropagation<T>::sendFactorToVariable(){
 template<typename T>
 void BeliefPropagation<T>::run(const unsigned &iteration_count){
    for(unsigned i = 0; i < iteration_count; i++){
+        cout << "Iteration " << i << endl;
+        cout << "varinace -> factor " << endl; 
         sendVariableToFactor();
+        cout << "factor -> varinace " << endl; 
         sendFactorToVariable();
     }
 }
