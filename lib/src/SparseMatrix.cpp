@@ -15,7 +15,7 @@ using namespace std;
 template<typename T>
 SparseMatrix<T> SparseMatrix<T>::fromFileDense(string file_name) {
     unsigned height, width;
-    Node<T> **data;
+    vector<vector<Node<T>>> data;
 
     std::ifstream fileInput(file_name);
     if(fileInput.fail()){

@@ -17,16 +17,17 @@ struct Node {
 template<typename T>
 class SparseMatrix {
     unsigned height, width;
-    Node<T> ** data;
+    vector<vector<Node<T>>> data;
 public:
     // default constructor
-    SparseMatrix():height(0), width(0), data(nullptr) {}
+    SparseMatrix():height(0), width(0), data() {}
     //Copy constructor
     SparseMatrix(const SparseMatrix &sm);
     //Move constructor
     SparseMatrix(SparseMatrix &&sm);
 
-    SparseMatrix(const unsigned &height, const unsigned &width, const vector<vector<Node<T>>> &data);
+    SparseMatrix(const unsigned &height, const unsigned &width, const vector<vector<Node<T>>> &data)
+    :height(height), width(width), data(data){}
     
 
      // Initilize from dense matrix located in file
