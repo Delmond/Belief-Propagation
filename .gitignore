@@ -3,5 +3,5 @@ build/*
 cachegrind.out*
 *cores.txt
 sequential.txt
-bin/master
+bin/main
 bin/performance
