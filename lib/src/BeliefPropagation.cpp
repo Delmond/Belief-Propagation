@@ -77,16 +77,16 @@ void BeliefPropagation<T>::sendVariableToFactor(){
     for(unsigned i = H.getWidth(); i <  H.getHeight(); i++){
         T mean_sum = Equations::correctionsumMeanFactorToVariable<T>(H.getVector(i), m_variable_to_factor.getVector(i));
         T variance_sum = Equations::correctionsumVarianceFactorToVariable<T>(H.getVector(i), v_variable_to_factor.getVector(i));
+        cout << "mean_sum: " << mean_sum << ", variance_sum: " << variance_sum << endl;
         for(unsigned j = 0; j < H.getRowSize(i); j++){
             const T computedVariance = Equations::calculateVarianceFactorToVariable(variance_sum, H(i, j), variances[i], v_variable_to_factor(i, j));
             const T computedMean = Equations::calculateMeanFactorToVariable(mean_sum, H(i, j), means[i], m_variable_to_factor(i, j));
-            cout << "mean_sum: " << mean_sum << ", variance_sum: " << variance_sum << endl;
-       
+           
             *v_variable_to_factor.getLink(i, j) = computedVariance;
             // if(damphing_enabled){
-                *m_variable_to_factor.getLink(i, j) = (1 - damphing[i][j])*computedMean + damphing[i][j]*(alpha*computedMean + (*m_variable_to_factor.getLink(i, j)) * (1 - alpha));
+                // *m_variable_to_factor.getLink(i, j) = (1 - damphing[i][j])*computedMean + damphing[i][j]*(alpha*computedMean + (*m_variable_to_factor.getLink(i, j)) * (1 - alpha));
             // } else {
-            //     *m_variable_to_factor.getLink(i, j) = computedMean;
+                *m_variable_to_factor.getLink(i, j) = computedMean;
             // }
             
         }
