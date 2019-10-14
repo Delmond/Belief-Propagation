@@ -26,13 +26,13 @@ int main(int argc, char* argv[]){
     SparseMatrix<double> H = SparseMatrix<double>::fromFileDense(H_path);
     vector<double> means = VectorIO::loadFromFile<double>(means_path);
     vector<double> variances = VectorIO::loadFromFile<double>(variances_path);
-    cout << "Preprocessing - Reordering nodes" << endl;
+    // cout << "Preprocessing - Reordering nodes" << endl;
 
-    Preprocessing::reorderNodes<double>(H, means, variances);
-    cout << "Preprocessing - Adding Virtual nodes" << endl;
+    // Preprocessing::reorderNodes<double>(H, means, variances);
+    // cout << "Preprocessing - Adding Virtual nodes" << endl;
 
-    Preprocessing::addVirtualNodes<double>(H, means, variances);
-    cout << "Preprocessing - Normalizing variances" << endl;
+    // Preprocessing::addVirtualNodes<double>(H, means, variances);
+    // cout << "Preprocessing - Normalizing variances" << endl;
     Preprocessing::normalizeVariances<double>(variances);
     cout << "Preprocessing - done" << endl;
 
@@ -57,10 +57,10 @@ int main(int argc, char* argv[]){
     // beliefPropagation.getVarianceFactorToVariable().printDense(6);
 
     auto start = chrono::high_resolution_clock::now();
-    beliefPropagation.run(3);
+    beliefPropagation.run(200000);
     auto end = chrono::high_resolution_clock::now();
     chrono::duration<double> duration = end - start;
-    // cout << "Iteration time: " << duration.count() << "s" << endl;
+    cout << "Iteration time: " << duration.count() << "s" << endl;
     vector<double> marginals = beliefPropagation.computeMarginals();
 
     // for(int i = 0; i < 2000; i++){

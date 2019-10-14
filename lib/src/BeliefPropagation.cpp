@@ -77,17 +77,16 @@ void BeliefPropagation<T>::sendVariableToFactor(){
     for(unsigned i = H.getWidth(); i <  H.getHeight(); i++){
         T mean_sum = Equations::correctionsumMeanFactorToVariable<T>(H.getVector(i), m_variable_to_factor.getVector(i));
         T variance_sum = Equations::correctionsumVarianceFactorToVariable<T>(H.getVector(i), v_variable_to_factor.getVector(i));
-        cout << "mean_sum: " << mean_sum << ", variance_sum: " << variance_sum << endl;
         for(unsigned j = 0; j < H.getRowSize(i); j++){
             const T computedVariance = Equations::calculateVarianceFactorToVariable(variance_sum, H(i, j), variances[i], v_variable_to_factor(i, j));
             const T computedMean = Equations::calculateMeanFactorToVariable(mean_sum, H(i, j), means[i], m_variable_to_factor(i, j));
            
             *v_variable_to_factor.getLink(i, j) = computedVariance;
-            // if(damphing_enabled){
-                // *m_variable_to_factor.getLink(i, j) = (1 - damphing[i][j])*computedMean + damphing[i][j]*(alpha*computedMean + (*m_variable_to_factor.getLink(i, j)) * (1 - alpha));
-            // } else {
+            if(damphing_enabled){
+                *m_variable_to_factor.getLink(i, j) = (1 - damphing[i][j])*computedMean + damphing[i][j]*(alpha*computedMean + (*m_variable_to_factor.getLink(i, j)) * (1 - alpha));
+            } else {
                 *m_variable_to_factor.getLink(i, j) = computedMean;
-            // }
+            }
             
         }
     }
@@ -99,8 +98,6 @@ void BeliefPropagation<T>::sendFactorToVariable(){
     for(unsigned i = 0; i < H_transposed.getHeight(); i++){
         T mean_sum = Equations::correctionsumMeanVariableToFactor(v_factor_to_variable.getVector(i), m_factor_to_variable.getVector(i));
         T variance_sum = Equations::correctionsumVarianceVariableToFactor(v_factor_to_variable.getVector(i));
-        cout << "mean_sum: " << mean_sum << ", variance_sum: " << variance_sum << endl;
-       
         for(unsigned j = 1; j < H_transposed.getRowSize(i); j++){
             const T computedVariance = Equations::calculateVarianceVariableToFactor(variance_sum, v_factor_to_variable(i, j));
             const T computedMean = Equations::calculateMeanVariableToFactor(mean_sum, computedVariance, v_factor_to_variable(i, j), m_factor_to_variable(i, j));
@@ -113,10 +110,7 @@ void BeliefPropagation<T>::sendFactorToVariable(){
 template<typename T>
 void BeliefPropagation<T>::run(const unsigned &iteration_count){
    for(unsigned i = 0; i < iteration_count; i++){
-        cout << "Iteration " << i << endl;
-        cout << "varinace -> factor " << endl; 
         sendVariableToFactor();
-        cout << "factor -> varinace " << endl; 
         sendFactorToVariable();
     }
 }

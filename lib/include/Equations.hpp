@@ -75,7 +75,6 @@ public:
         T sum = T();
         T c = T();
         for(unsigned i = 0; i < vector_m_variable_to_factor.size(); i++){
-            cout << vector_factor[i].value << " " << vector_m_variable_to_factor[i].value << endl;
             const T next = vector_factor[i].value*vector_m_variable_to_factor[i].value - c;
             const T t = sum + next;
             c = (t - sum) - next;
