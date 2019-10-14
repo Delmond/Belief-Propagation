@@ -19,20 +19,20 @@ int main(int argc, char* argv[]){
     string means_path = "bin/" + folder + "/means.txt";
     string variances_path = "bin/" + folder + "/variances.txt";
 
-    // SparseMatrix<double> H = SparseMatrix<double>::fromFileCSC("bin/data283803x70000/factors_csc.txt");
-    // vector<double> means = VectorIO::loadFromFile<double>("bin/data283803x70000/means.txt");
-    // vector<double> variances = VectorIO::loadFromFile<double>("bin/data283803x70000/variances.txt");
+    SparseMatrix<double> H = SparseMatrix<double>::fromFileCSC("bin/data283803x70000/factors_csc.txt");
+    vector<double> means = VectorIO::loadFromFile<double>("bin/data283803x70000/means.txt");
+    vector<double> variances = VectorIO::loadFromFile<double>("bin/data283803x70000/variances.txt");
 
-    SparseMatrix<double> H = SparseMatrix<double>::fromFileDense(H_path);
-    vector<double> means = VectorIO::loadFromFile<double>(means_path);
-    vector<double> variances = VectorIO::loadFromFile<double>(variances_path);
-    // cout << "Preprocessing - Reordering nodes" << endl;
+    // SparseMatrix<double> H = SparseMatrix<double>::fromFileDense(H_path);
+    // vector<double> means = VectorIO::loadFromFile<double>(means_path);
+    // vector<double> variances = VectorIO::loadFromFile<double>(variances_path);
+    cout << "Preprocessing - Reordering nodes" << endl;
 
-    // Preprocessing::reorderNodes<double>(H, means, variances);
-    // cout << "Preprocessing - Adding Virtual nodes" << endl;
+    Preprocessing::reorderNodes<double>(H, means, variances);
+    cout << "Preprocessing - Adding Virtual nodes" << endl;
 
-    // Preprocessing::addVirtualNodes<double>(H, means, variances);
-    // cout << "Preprocessing - Normalizing variances" << endl;
+    Preprocessing::addVirtualNodes<double>(H, means, variances);
+    cout << "Preprocessing - Normalizing variances" << endl;
     Preprocessing::normalizeVariances<double>(variances);
     cout << "Preprocessing - done" << endl;
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]){
     // beliefPropagation.getVarianceFactorToVariable().printDense(6);
 
     auto start = chrono::high_resolution_clock::now();
-    beliefPropagation.run(200000);
+    beliefPropagation.run(200);
     auto end = chrono::high_resolution_clock::now();
     chrono::duration<double> duration = end - start;
     cout << "Iteration time: " << duration.count() << "s" << endl;
@@ -69,10 +69,10 @@ int main(int argc, char* argv[]){
     //     double wrss = Analytics::computeWrss<double>(marginals, H, means, variances);
     //     cout << wrss << endl;
     // }
-    cout << "Marginals: " << endl;
-    for(unsigned i = 0; i < marginals.size(); i++){
-        cout << marginals[i] << " ";
-    }
+    // cout << "Marginals: " << endl;
+    // for(unsigned i = 0; i < marginals.size(); i++){
+    //     cout << marginals[i] << " ";
+    // }
     // cout << endl;
     // WLS<double> wls(H, means, variances);
     // wls.run_QR();
