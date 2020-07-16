@@ -1,8 +1,10 @@
 COMPILER=g++
-CXXFLAGS=-O3 -Wall
-EXPERIMENTALFLAGS=-ffast-math 
+CXXFLAGS=-O3 -Wall -fopenmp -msse2 
+EXPERIMENTALFLAGS=-ffast-math
+LINKERFLAGS= -I/usr/lib/x86_64-linux-gnu/ -lcholmod -lspqr -lamd -lsuperlu 
+EIGENLIBS=/usr/lib/x86_64-linux-gnu/libsuperlu.so /usr/lib/x86_64-linux-gnu/libspqr.so /usr/lib/x86_64-linux-gnu/libcholmod.so /usr/lib/x86_64-linux-gnu/libumfpack.so
 all: main sparse_matrix belief_propagation WLS
-	$(COMPILER) $(CXXFLAGS) build/main.o build/SparseMatrix.o build/BeliefPropagation.o  build/WLS.o -o bin/main 
+	$(COMPILER) $(LINKERFLAGS) $(CXXFLAGS)  build/WLS.o $(EIGENLIBS) build/main.o build/SparseMatrix.o build/BeliefPropagation.o  -o bin/main 
 
 main: main.cpp
 	$(COMPILER) $(CXXFLAGS) -c main.cpp -o build/main.o
@@ -27,3 +29,9 @@ build_performance: performance_bench sparse_matrix belief_propagation
 
 bench:
 	./bin/performance
+
+cache:
+	valgrind --tool=cachegrind bin/main
+	
+cache_show:
+	cg_annotate ${file}
